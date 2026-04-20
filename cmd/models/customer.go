@@ -14,4 +14,10 @@ type Customer struct {
 	CustomerCategory string `gorm:"size:20"`
 	FullName         string `gorm:"size:100"`
 	CifCreationDate  string `gorm:"size:30"`
+	ArApTracking     string `gorm:"size:5"` // Accounts Receivable / Accounts Payable Tracking
+	ExpectedCountry  string `gorm:"size:20"`
+	Frozen           string `gorm:"size:5;default:N"`
+	Dead             string `gorm:"size:5;default:N"`
+	Whrunkn          string `gorm:"size:5;default:N"`
+	Media            string `gorm:"size:20"`
 }
