@@ -15,10 +15,13 @@ func main() {
 		log.Fatal("DB connection failed:", err)
 	}
 
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(
+		&models.User{},
+		&models.Customer{},
+	)
 	if err != nil {
 		log.Fatal("Migrate failed:", err)
 	}
 
-	log.Println("User table migrate successfully")
+	log.Println("Migrate successfully!")
 }
