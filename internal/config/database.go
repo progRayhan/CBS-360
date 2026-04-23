@@ -15,18 +15,16 @@ import (
 )
 
 // Build DSN
-func getDsn() string {
-	dbName := viper.GetString("MASTER_DB_NAME")
-	dbUser := viper.GetString("MASTER_DB_USER")
-	dbPassword := viper.GetString("MASTER_DB_PASSWORD")
-	dbHost := viper.GetString("MASTER_DB_HOST")
-	dbPort := viper.GetString("MASTER_DB_PORT")
-	dbSSLMode := viper.GetString("MASTER_SSL_MODE")
-	dbTimeZone := viper.GetString("TIME_ZONE")
-
+func getDsn(cfg *Config) string {
 	return fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
-		dbHost, dbUser, dbPassword, dbName, dbPort, dbSSLMode, dbTimeZone,
+		cfg.DBHost,
+		cfg.DBUser,
+		cfg.DBPassword,
+		cfg.DBName,
+		cfg.DBPort,
+		cfg.SSLMode,
+		cfg.TimeZone,
 	)
 }
 
@@ -39,26 +37,26 @@ func getGormLogLevel() logger.LogLevel {
 }
 
 // Configure connection pool
-func setConnectionPool(db *sql.DB) {
-	maxIdle := viper.GetInt("SET_MAX_IDLE_CONNECTIONS")
+func setConnectionPool(db *sql.DB, cfg *Config) {
+	maxIdle := cfg.MaxIdleConns
 	if maxIdle == 0 {
 		maxIdle = 10
 	}
 	db.SetMaxIdleConns(maxIdle)
 
-	maxOpen := viper.GetInt("SET_MAX_OPEN_CONNECTIONS")
+	maxOpen := cfg.MaxOpenConns
 	if maxOpen == 0 {
 		maxOpen = 100
 	}
 	db.SetMaxOpenConns(maxOpen)
 
-	maxIdleTime := viper.GetDuration("SET_CONNECTION_MAX_IDLE_TIME")
+	maxIdleTime := cfg.MaxIdleTime
 	if maxIdleTime == 0 {
 		maxIdleTime = 5 * time.Minute
 	}
 	db.SetConnMaxIdleTime(maxIdleTime)
 
-	maxLifetime := viper.GetDuration("SET_CONNECTION_MAX_LIFE_TIME")
+	maxLifetime := cfg.MaxLifeTime
 	if maxLifetime == 0 {
 		maxLifetime = 30 * time.Minute
 	}
@@ -66,15 +64,15 @@ func setConnectionPool(db *sql.DB) {
 }
 
 // Main DB connection function
-func ConnectDB() (*gorm.DB, error) {
-	dsn := getDsn()
+func ConnectDB(cfg *Config) (*gorm.DB, error) {
+	dsn := getDsn(cfg)
 
-	maxRetries := viper.GetInt("DB_MAX_RETRIES")
+	maxRetries := cfg.DBMaxRetries
 	if maxRetries == 0 {
 		maxRetries = 10
 	}
 
-	initialDelay := viper.GetDuration("DB_INITIAL_DELAY")
+	initialDelay := cfg.RetryDelay
 	if initialDelay == 0 {
 		initialDelay = 2 * time.Second
 	}
@@ -104,7 +102,7 @@ func ConnectDB() (*gorm.DB, error) {
 
 				if pingErr == nil {
 					// Setup pool
-					setConnectionPool(sqlDB)
+					setConnectionPool(sqlDB, cfg)
 
 					if attempt > 1 {
 						log.Printf("Connected to database after %d attempts", attempt)
