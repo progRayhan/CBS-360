@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/progRayhan/CBS-360/internal/config"
-	"github.com/progRayhan/CBS-360/internal/database/models"
+	"github.com/progRayhan/CBS-360/internal/database/models/customer"
 )
 
 func main() {
@@ -16,10 +16,10 @@ func main() {
 	}
 
 	err = db.AutoMigrate(
-		&models.User{},
-		&models.Customer{},
-		&models.KYC{},
-		&models.KYCDocument{},
+		&customer.User{},
+		&customer.Customer{},
+		&customer.KYC{},
+		&customer.KYCDocument{},
 	)
 	if err != nil {
 		log.Fatal("Migration failed:", err)

@@ -1,4 +1,4 @@
-package models
+package customer
 
 type Customer struct {
 	ID                 uint   `gorm:"primaryKey;autoIncrement"`

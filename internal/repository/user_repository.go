@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/progRayhan/CBS-360/internal/database/models"
+	"github.com/progRayhan/CBS-360/internal/database/models/customer"
 	"gorm.io/gorm"
 )
 
@@ -13,8 +13,8 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) GetByID(id uint) (*models.User, error) {
-	var user models.User
+func (r *UserRepository) GetByID(id uint) (*customer.User, error) {
+	var user customer.User
 
 	if err := r.db.First(&user, id).Error; err != nil {
 		return nil, err

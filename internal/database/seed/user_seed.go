@@ -3,12 +3,12 @@ package seed
 import (
 	"log"
 
-	"github.com/progRayhan/CBS-360/internal/database/models"
+	"github.com/progRayhan/CBS-360/internal/database/models/customer"
 	"gorm.io/gorm"
 )
 
 func CreateUser(db *gorm.DB) {
-	user := models.User{
+	user := customer.User{
 		Name:     "Mohammad Rayhan",
 		Email:    "rayhan@gmail.com",
 		Password: "rayhan10",
