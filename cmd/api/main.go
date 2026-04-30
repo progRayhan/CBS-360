@@ -28,7 +28,11 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
-	router.Setup(app, userHandler)
+	kycRepo := repository.NewKYCRepository(db)
+	kycService := service.NewKYCService(kycRepo, db)
+	kycHandler := handler.NewKYCHandler(kycService)
+
+	router.Setup(app, userHandler, kycHandler)
 
 	log.Println("Server running on http://localhost:3000")
 	log.Fatal(app.Listen(":3000"))
